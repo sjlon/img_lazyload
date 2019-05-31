@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            body{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+            img{
+                height: 500px;
+                width: 500px;
+            }
+            .lazy-image{
+                background: url('./images/giphy.gif') no-repeat center;
+            }
+        </style>
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+        <img class="lazy-image" data-src="./images/image1 - 副本 (1).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (2).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (3).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (4).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (5).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (6).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (7).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (8).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (9).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (10).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (11).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (12).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (13).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (14).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (15).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (16).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (17).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (18).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (19).jpg" alt="">
+        <img class="lazy-image" data-src="./images/image1 - 副本 (20).jpg" alt="">
+        <script>
+            let imageEles = Array.prototype.slice.call(document.querySelectorAll('.lazy-image'))
+            let _throttleFn = throttle(inViewShow)
+            function inViewShow() {
+                let len = imageEles.length
+                for(let i = 0; i < len; i++) {
+                    let img = imageEles[i]
+                    let rect = img.getBoundingClientRect()
+                    let clientHeight = document.documentElement.clientHeight
+                    if (rect.top < clientHeight) {
+                        img.src = img.dataset.src
+                        imageEles.splice(i, 1)
+                        len--
+                        i--
+                        if (imageEles.length === 0) {
+                            window.removeEventListener('scroll', _throttleFn)
+                        }
+                    }
+                }
+            }
+            function throttle(fn, delay, mustRun) {
+                var delay = delay || 15
+                var mustRun = mustRun || 30
+                var t_start = null, timer = null, context = this;
+                return function() {
+                    var t_current = +(new Date)
+                    var args = Array.prototype.slice.call(arguments)
+                    clearTimeout(timer)
+                    if (!t_start) {
+                        t_start = t_current
+                    }
+                    if (t_current - t_start > mustRun) {
+                        fn.apply(context, args)
+                        t_start = t_current
+                    } else {
+                        timer = setTimeout(function(){
+                            fn.apply(context, args)
+                        }, delay)
+                    }
+                }
+            }
+
+            init()
+            function init() {
+                if ('IntersectionObserver' in window) {
+                    console.log(111);
+                     let lazyImgObserver = new IntersectionObserver(function (entries, observer) {
+                        //  console.log(entries, observer);
+                        entries.forEach(function(entry, index){
+                            // 如果可见
+                            if (entry.isIntersecting){
+                                let img = entry.target
+                                img.src = img.dataset.src
+                                img.classList.remove('lazy-image')
+                                lazyImgObserver.unobserve(img)
+                            }
+                        })
+                     })
+                     imageEles.forEach(function(lazyImg){
+                         lazyImgObserver.observe(lazyImg)
+                     })
+                } else {
+                    inViewShow()
+                    window.addEventListener('scroll', _throttleFn.bind(this))
+                }
+            }
+        </script>
+    </body>
+</html>
